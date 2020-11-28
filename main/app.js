@@ -3,9 +3,10 @@ const bodyParser = require('body-parser')
 const Sequelize = require('sequelize')
 
 const mysql = require('mysql2/promise')
+const { text } = require('express')
 
 const DB_USERNAME = 'root'
-const DB_PASSWORD = 'pass'
+const DB_PASSWORD = 'nuamcreier'
 
 let conn
 
@@ -63,7 +64,9 @@ app.get('/create', async (req, res) => {
 
 app.get('/homeworks', async (req, res) => {
     try{
-
+        Homework.findAll().then((results) => {
+            res.status(200).json(results)
+        })
     }
     catch(err){
         console.warn(err.stack)
@@ -73,15 +76,19 @@ app.get('/homeworks', async (req, res) => {
 
 app.get('/homeworks/:id', async (req, res) => {
     try{
-
-        
+        Homework.findByPk(req.params.id).then((result) => {
+            if(result) {
+                //res.status(200).send(result.content)
+                res.status(200).json(result)
+            } else {
+                res.status(404).send('resource not found')
+            }  
+        })     
     }
     catch(err){
         console.warn(err.stack)
         res.status(500).json({message : 'server error'})        
     }
 })
-
-
 
 module.exports = app
